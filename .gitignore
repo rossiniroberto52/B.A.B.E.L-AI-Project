@@ -1,0 +1,27 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Large files
+*.whl
+*.tar.gz
+*.7z
+
+# Model outputs
+out/
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.safetensors
+*.onnx
+
+# Docker build artifacts
+docker/
+
+# Graphify outputs
+graphify-out/
+
+# OS
+.DS_Store
+Thumbs.db
