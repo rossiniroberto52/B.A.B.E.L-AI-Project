@@ -63,7 +63,7 @@ B.A.B.E.L AI project é uma plataforma para óculos de realidade aumentada (AR) 
 - Adote o código de conduta e o padrão de commits do projeto (especifique um modelo se desejar).
 
 ## Licença
-(Adicionar aqui a licença desejada — ex.: MIT, Apache-2.0)
+Apache-2.0
 
 ## Contato
 - Maintainer: rossiniroberto52
