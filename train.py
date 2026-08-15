@@ -67,14 +67,29 @@ def sample(model, tokenizer, n_tokens, temperature, top_k, device):
     return tokenizer.decode(out[0].tolist())
 
 
-def save_checkpoint(model, config, best_val_loss, iter_num, path):
+def save_checkpoint(model, optimizer, config, best_val_loss, iter_num, path):
     ckpt = {
         "model": model.state_dict(),
+        "optimizer": optimizer.state_dict(),
         "config": config,
         "best_val_loss": best_val_loss,
         "iter_num": iter_num,
     }
     torch.save(ckpt, path)
+
+
+def resolve_resume_checkpoint(out_dir):
+    preferred = os.path.join(out_dir, "ckpt.pt")
+    if os.path.exists(preferred):
+        return preferred
+    candidates = [
+        os.path.join(out_dir, name)
+        for name in os.listdir(out_dir)
+        if name.endswith(".pt")
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=os.path.getmtime)
 
 
 def build_char_tokenizer(text):
@@ -187,6 +202,7 @@ def main():
     parser.add_argument("--train_split", type=float, default=0.9)
     parser.add_argument("--val_split", type=float, default=0.1)
     parser.add_argument("--threads", type=int, default=0)
+    parser.add_argument("--resume", action="store_true")
 
     args = parser.parse_args()
 
@@ -268,9 +284,30 @@ def main():
     best_val_loss = float("inf")
     bad_evals = 0
     early_stopped = False
+    start_iter = 0
+
+    if args.resume:
+        ckpt_path = resolve_resume_checkpoint(args.out_dir)
+        if ckpt_path is None:
+            print(f"Nenhum checkpoint encontrado em {args.out_dir}, iniciando do zero")
+        else:
+            ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
+            model.load_state_dict(ckpt["model"])
+            if "optimizer" in ckpt:
+                optimizer.load_state_dict(ckpt["optimizer"])
+            best_val_loss = float(ckpt.get("best_val_loss", best_val_loss))
+            start_iter = int(ckpt.get("iter_num", -1)) + 1
+            if start_iter >= args.max_iters:
+                print(
+                    f"Checkpoint encontrado em iter {start_iter - 1}, "
+                    f"mas max_iters={args.max_iters}; nada para retomar."
+                )
+                return
+            print(f"Checkpoint encontrado em iter {start_iter - 1}, retomando treino...")
+
     t0 = time.time()
 
-    for it in range(args.max_iters):
+    for it in range(start_iter, args.max_iters):
         if it % args.eval_interval == 0:
             train_loss, val_loss = evaluate(model, data_t, args, config, train_split, device)
             elapsed = time.time() - t0
@@ -283,7 +320,12 @@ def main():
                 best_val_loss = val_loss
                 bad_evals = 0
                 save_checkpoint(
-                    model, config, best_val_loss, it, os.path.join(args.out_dir, "ckpt.pt")
+                    model,
+                    optimizer,
+                    config,
+                    best_val_loss,
+                    it,
+                    os.path.join(args.out_dir, "ckpt.pt"),
                 )
             else:
                 bad_evals += 1
@@ -332,9 +374,7 @@ def main():
             )
 
     train_loss, val_loss = evaluate(model, data_t, args, config, train_split, device)
-    save_checkpoint(
-        model, config, best_val_loss, it, os.path.join(args.out_dir, "ckpt_final.pt")
-    )
+    save_checkpoint(model, optimizer, config, best_val_loss, it, os.path.join(args.out_dir, "ckpt_final.pt"))
     print(
         f"fim: train {train_loss:.4f} | val {val_loss:.4f} | melhor val {best_val_loss:.4f}"
         f"{' | early stop' if early_stopped else ''}"
