@@ -42,16 +42,14 @@ def get_batch(split, data, block_size, batch_size, train_split, device):
     return x.to(device), y.to(device)
 
 
-def evaluate(model, data, args, config, device):
+def evaluate(model, data, args, config, train_split, device):
     model.eval()
     losses = []
     for split in ("train", "val"):
         loss_accum = 0.0
         n_steps = max(1, args.eval_iters // args.batch_size)
         for _ in range(n_steps):
-            x, y = get_batch(
-                split, data, config.block_size, args.batch_size, args.train_split, device,
-            )
+            x, y = get_batch(split, data, config.block_size, args.batch_size, train_split, device)
             with torch.no_grad():
                 _, loss = model(x, y)
             loss_accum += loss.item()
@@ -77,6 +75,79 @@ def save_checkpoint(model, config, best_val_loss, iter_num, path):
         "iter_num": iter_num,
     }
     torch.save(ckpt, path)
+
+
+def build_char_tokenizer(text):
+    chars = sorted(list(set(text)))
+    stoi = {ch: i for i, ch in enumerate(chars)}
+    itos = {i: ch for i, ch in enumerate(chars)}
+    tokenizer = type(
+        "Tokenizer",
+        (),
+        {
+            "encode": lambda self, s, stoi=stoi: [stoi[c] for c in s],
+            "decode": lambda self, l, itos=itos: "".join(itos[i] for i in l),
+        },
+    )()
+    return tokenizer, chars, stoi
+
+
+def load_data_and_tokenizer(args):
+    train_bin_path = os.path.join(args.data_dir, "train.bin")
+    val_bin_path = os.path.join(args.data_dir, "val.bin")
+    meta_path = os.path.join(args.data_dir, "meta.json")
+
+    if os.path.exists(train_bin_path) and os.path.exists(val_bin_path):
+        meta = {}
+        if os.path.exists(meta_path):
+            with open(meta_path, encoding="utf-8") as f:
+                meta = json.load(f)
+
+        dtype = np.dtype(meta.get("dtype", "uint16"))
+        train_np = np.fromfile(train_bin_path, dtype=dtype)
+        val_np = np.fromfile(val_bin_path, dtype=dtype)
+        if len(train_np) == 0 or len(val_np) == 0:
+            print("ERRO: train.bin/val.bin estão vazios")
+            sys.exit(1)
+
+        data = np.concatenate([train_np, val_np]).astype(np.int64, copy=False)
+        train_split = len(train_np) / len(data)
+        vocab_size = args.vocab_size or int(meta.get("vocab_size", int(data.max()) + 1))
+
+        tokenizer_path = meta.get("tokenizer_path") or os.path.join(args.data_dir, "bpe_vocab.json")
+        if os.path.exists(tokenizer_path):
+            from tokenizers import Tokenizer as HFTokenizer
+
+            hf_tokenizer = HFTokenizer.from_file(tokenizer_path)
+            tokenizer = type(
+                "Tokenizer",
+                (),
+                {
+                    "encode": lambda self, s, t=hf_tokenizer: t.encode(s).ids,
+                    "decode": lambda self, l, t=hf_tokenizer: t.decode(l),
+                },
+            )()
+        else:
+            tokenizer = type(
+                "Tokenizer",
+                (),
+                {"encode": lambda self, s: [], "decode": lambda self, l: " ".join(str(i) for i in l)},
+            )()
+
+        config_extra = {"tokenizer_path": tokenizer_path}
+        return data, tokenizer, vocab_size, train_split, config_extra
+
+    data_path = os.path.join(args.data_dir, f"{args.dataset}.txt")
+    if not os.path.exists(data_path):
+        print(f"dataset não encontrado em {data_path}")
+        sys.exit(1)
+
+    text = open(data_path, encoding="utf-8").read()
+    tokenizer, chars, stoi = build_char_tokenizer(text)
+    data = np.array([stoi[c] for c in text], dtype=np.int64)
+    vocab_size = args.vocab_size or len(chars)
+    config_extra = {"chars": chars}
+    return data, tokenizer, vocab_size, args.train_split, config_extra
 
 
 def main():
@@ -134,44 +205,21 @@ def main():
         print("cuda pedido mas indisponível; usando cpu")
         device = "cpu"
 
-    data_path = os.path.join(args.data_dir, f"{args.dataset}.txt")
-    if not os.path.exists(data_path):
-        print(f"dataset não encontrado em {data_path}")
-        sys.exit(1)
-
-    text = open(data_path, encoding="utf-8").read()
-
-    chars = sorted(list(set(text)))
-    vocab_size = args.vocab_size or len(chars)
-    stoi = {ch: i for i, ch in enumerate(chars)}
-    itos = {i: ch for i, ch in enumerate(chars)}
-    tokenizer = type(
-        "Tokenizer",
-        (),
-        {
-            "encode": lambda self, s, stoi=stoi: [stoi[c] for c in s],
-            "decode": lambda self, l, itos=itos: "".join(itos[i] for i in l),
-        },
-    )()
-
-    data = np.frombuffer(text.encode("utf-8"), dtype=np.uint8)
-    data = np.array([stoi[chr(b)] for b in data], dtype=np.int64)
+    data, tokenizer, vocab_size, train_split, config_extra = load_data_and_tokenizer(args)
     data_t = torch.from_numpy(data)
 
     os.makedirs(args.out_dir, exist_ok=True)
+    config_payload = {
+        "block_size": args.block_size,
+        "vocab_size": vocab_size,
+        "n_layer": args.n_layer,
+        "n_head": args.n_head,
+        "n_embd": args.n_embd,
+        "dropout": args.dropout,
+    }
+    config_payload.update(config_extra)
     with open(os.path.join(args.out_dir, "config.json"), "w") as f:
-        json.dump(
-            {
-                "block_size": args.block_size,
-                "vocab_size": vocab_size,
-                "n_layer": args.n_layer,
-                "n_head": args.n_head,
-                "n_embd": args.n_embd,
-                "dropout": args.dropout,
-                "chars": chars,
-            },
-            f,
-        )
+        json.dump(config_payload, f)
     with open(os.path.join(args.out_dir, "train_args.json"), "w") as f:
         json.dump(vars(args), f, indent=2)
 
@@ -224,7 +272,7 @@ def main():
 
     for it in range(args.max_iters):
         if it % args.eval_interval == 0:
-            train_loss, val_loss = evaluate(model, data_t, args, config, device)
+            train_loss, val_loss = evaluate(model, data_t, args, config, train_split, device)
             elapsed = time.time() - t0
             print(
                 f"iter {it:6d} | train {train_loss:.4f} | val {val_loss:.4f} "
@@ -266,9 +314,7 @@ def main():
         optimizer.zero_grad(set_to_none=True)
         loss_accum = 0.0
         for _ in range(args.grad_accum):
-            x, y = get_batch(
-                "train", data_t, config.block_size, args.batch_size, args.train_split, device,
-            )
+            x, y = get_batch("train", data_t, config.block_size, args.batch_size, train_split, device)
             _, loss = model(x, y)
             (loss / args.grad_accum).backward()
             loss_accum += loss.item()
@@ -285,7 +331,7 @@ def main():
                 f"gnorm {grad_norm_accum:.3f} | {dt:.1f}s"
             )
 
-    train_loss, val_loss = evaluate(model, data_t, args, config, device)
+    train_loss, val_loss = evaluate(model, data_t, args, config, train_split, device)
     save_checkpoint(
         model, config, best_val_loss, it, os.path.join(args.out_dir, "ckpt_final.pt")
     )
