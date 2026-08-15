@@ -29,11 +29,19 @@ def main():
 
     with open(os.path.join(args.out_dir, "config.json")) as f:
         meta = json.load(f)
-    chars = meta["chars"]
-    stoi = {ch: i for i, ch in enumerate(chars)}
-    itos = {i: ch for i, ch in enumerate(chars)}
-    encode = lambda s: [stoi[c] for c in s]
-    decode = lambda l: "".join(itos[i] for i in l)
+
+    if "tokenizer_path" in meta and meta["tokenizer_path"]:
+        from tokenizers import Tokenizer as HFTokenizer
+
+        tokenizer = HFTokenizer.from_file(meta["tokenizer_path"])
+        encode = lambda s: tokenizer.encode(s).ids
+        decode = lambda l: tokenizer.decode(l)
+    else:
+        chars = meta["chars"]
+        stoi = {ch: i for i, ch in enumerate(chars)}
+        itos = {i: ch for i, ch in enumerate(chars)}
+        encode = lambda s: [stoi[c] for c in s]
+        decode = lambda l: "".join(itos[i] for i in l)
 
     if args.prompt:
         start = torch.tensor([encode(args.prompt)], dtype=torch.long)
