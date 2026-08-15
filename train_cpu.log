@@ -1,0 +1,164 @@
+nohup: ignoring input
+dataset: tinyshakespeare | tokens: 1,115,394 | vocab: 65
+modelo: 10.77M params | block_size=256
+device: cpu — | threads: 10
+bytes/step (fwd+bwd): 0.0 MB x grad_accum=2
+iter      0 | train 4.3026 | val 4.3007 | lr 5.94e-06 |   11.4s
+        checkpoint salvo (melhor val)
+iter      0 | loss 4.2937 | gnorm 13.248 | 15.1s
+iter     20 | loss 2.8219 | gnorm 1.481 | 67.2s
+iter     40 | loss 2.5748 | gnorm 0.772 | 116.6s
+iter     60 | loss 2.5279 | gnorm 0.783 | 170.1s
+iter     80 | loss 2.4718 | gnorm 0.791 | 219.1s
+iter    100 | loss 2.4921 | gnorm 0.663 | 260.0s
+iter    120 | loss 2.4657 | gnorm 0.609 | 300.8s
+iter    140 | loss 2.4584 | gnorm 0.568 | 341.5s
+iter    160 | loss 2.4261 | gnorm 0.600 | 384.0s
+iter    180 | loss 2.3700 | gnorm 0.581 | 427.1s
+iter    200 | train 2.3245 | val 2.3630 | lr 5.96e-04 |  474.8s
+        checkpoint salvo (melhor val)
+iter    200 | loss 2.3682 | gnorm 0.673 | 476.9s
+iter    220 | loss 2.2945 | gnorm 0.544 | 517.8s
+iter    240 | loss 2.2543 | gnorm 0.741 | 558.0s
+iter    260 | loss 2.2434 | gnorm 0.789 | 605.5s
+iter    280 | loss 2.1951 | gnorm 0.706 | 652.6s
+iter    300 | loss 2.1236 | gnorm 0.712 | 703.8s
+iter    320 | loss 2.0937 | gnorm 0.747 | 752.0s
+iter    340 | loss 2.0868 | gnorm 0.725 | 801.6s
+iter    360 | loss 2.0014 | gnorm 0.708 | 845.9s
+iter    380 | loss 2.0082 | gnorm 0.606 | 889.1s
+iter    400 | train 1.8805 | val 1.9880 | lr 5.67e-04 |  946.7s
+        checkpoint salvo (melhor val)
+iter    400 | loss 1.9322 | gnorm 0.643 | 949.5s
+iter    420 | loss 1.8767 | gnorm 0.690 | 999.3s
+iter    440 | loss 1.9080 | gnorm 0.707 | 1044.2s
+iter    460 | loss 1.8488 | gnorm 0.736 | 1087.4s
+iter    480 | loss 1.8476 | gnorm 0.670 | 1137.3s
+---- amostra iter 500 ----
+
+Whane gare his pryfitity; prator perere dead, and oo a our
+In spuck our proty with fractian Yen praint.
+
+BENVOLO:
+So wo mage; vish mirt to our look, liss's their Romen
+cout sunted day of to ming to that pruyp
+in: store they good to this hangbed ever in wit
+--------------------------
+iter    500 | loss 1.7550 | gnorm 0.652 | 1187.2s
+iter    520 | loss 1.7571 | gnorm 0.645 | 1229.2s
+iter    540 | loss 1.7752 | gnorm 0.689 | 1270.7s
+iter    560 | loss 1.7026 | gnorm 0.642 | 1312.1s
+iter    580 | loss 1.7145 | gnorm 0.734 | 1353.4s
+iter    600 | train 1.6195 | val 1.7795 | lr 5.13e-04 | 1400.6s
+        checkpoint salvo (melhor val)
+iter    600 | loss 1.7030 | gnorm 0.754 | 1402.7s
+iter    620 | loss 1.6934 | gnorm 0.576 | 1448.5s
+iter    640 | loss 1.6026 | gnorm 0.725 | 1489.5s
+iter    660 | loss 1.6314 | gnorm 0.630 | 1530.1s
+iter    680 | loss 1.5975 | gnorm 0.586 | 1570.6s
+iter    700 | loss 1.5757 | gnorm 0.656 | 1614.2s
+iter    720 | loss 1.6002 | gnorm 0.626 | 1657.8s
+iter    740 | loss 1.5762 | gnorm 0.658 | 1698.6s
+iter    760 | loss 1.5847 | gnorm 0.614 | 1744.8s
+iter    780 | loss 1.5713 | gnorm 0.630 | 1786.5s
+iter    800 | train 1.4950 | val 1.6694 | lr 4.38e-04 | 1838.9s
+        checkpoint salvo (melhor val)
+iter    800 | loss 1.5589 | gnorm 0.612 | 1841.1s
+iter    820 | loss 1.5367 | gnorm 0.662 | 1883.6s
+iter    840 | loss 1.5366 | gnorm 0.671 | 1926.2s
+iter    860 | loss 1.5127 | gnorm 0.625 | 1968.5s
+iter    880 | loss 1.5584 | gnorm 0.593 | 2010.7s
+iter    900 | loss 1.5038 | gnorm 0.627 | 2053.0s
+iter    920 | loss 1.4902 | gnorm 0.589 | 2095.5s
+iter    940 | loss 1.5002 | gnorm 0.629 | 2138.4s
+iter    960 | loss 1.4583 | gnorm 0.604 | 2180.4s
+iter    980 | loss 1.4596 | gnorm 0.607 | 2222.9s
+iter   1000 | train 1.3989 | val 1.5979 | lr 3.52e-04 | 2271.3s
+        checkpoint salvo (melhor val)
+---- amostra iter 1000 ----
+
+Poss:
+Thing, thou lady Angels fee, yes, day, mother
+Gives all perjove me me to villument, hath aim
+All thou fear to savests fleedful the prince
+Had you wish leased itself.
+
+Citizens:
+Ress!
+
+First Marcianes:
+I am not not be a heaven.
+
+LUCIO:
+Yes, Hord's upo
+--------------------------
+iter   1000 | loss 1.4117 | gnorm 0.582 | 2276.8s
+iter   1020 | loss 1.4597 | gnorm 0.583 | 2318.6s
+iter   1040 | loss 1.4272 | gnorm 0.593 | 2360.4s
+iter   1060 | loss 1.4333 | gnorm 0.561 | 2403.7s
+iter   1080 | loss 1.4034 | gnorm 0.629 | 2445.1s
+iter   1100 | loss 1.3955 | gnorm 0.590 | 2486.7s
+iter   1120 | loss 1.3922 | gnorm 0.552 | 2530.1s
+iter   1140 | loss 1.4015 | gnorm 0.542 | 2570.6s
+iter   1160 | loss 1.3455 | gnorm 0.539 | 2611.3s
+iter   1180 | loss 1.3507 | gnorm 0.541 | 2659.2s
+iter   1200 | train 1.3500 | val 1.5696 | lr 2.64e-04 | 2713.0s
+        checkpoint salvo (melhor val)
+iter   1200 | loss 1.3798 | gnorm 0.555 | 2715.6s
+iter   1220 | loss 1.3617 | gnorm 0.531 | 2763.3s
+iter   1240 | loss 1.3992 | gnorm 0.636 | 2812.5s
+iter   1260 | loss 1.4229 | gnorm 0.588 | 2859.2s
+iter   1280 | loss 1.3448 | gnorm 0.618 | 2900.5s
+iter   1300 | loss 1.4130 | gnorm 0.588 | 2942.0s
+iter   1320 | loss 1.3552 | gnorm 0.529 | 2989.3s
+iter   1340 | loss 1.3695 | gnorm 0.575 | 3029.7s
+iter   1360 | loss 1.3520 | gnorm 0.565 | 3070.4s
+iter   1380 | loss 1.3422 | gnorm 0.542 | 3111.1s
+iter   1400 | train 1.3123 | val 1.5514 | lr 1.82e-04 | 3158.2s
+        checkpoint salvo (melhor val)
+iter   1400 | loss 1.2812 | gnorm 0.553 | 3160.6s
+iter   1420 | loss 1.2945 | gnorm 0.542 | 3201.3s
+iter   1440 | loss 1.3186 | gnorm 0.528 | 3242.3s
+iter   1460 | loss 1.3762 | gnorm 0.614 | 3283.6s
+iter   1480 | loss 1.3297 | gnorm 0.556 | 3323.8s
+---- amostra iter 1500 ----
+
+I know not what, what he, may, beholds you
+Had does no more, my heart truth coron'd.
+But thou pass their ship; tell him with thee.
+To but the based and the friends of it.
+What is alikent my sense spoke,
+My husband's son'st is discomfress, stale and lies?
+S
+--------------------------
+iter   1500 | loss 1.3039 | gnorm 0.520 | 3368.1s
+iter   1520 | loss 1.3224 | gnorm 0.590 | 3408.9s
+iter   1540 | loss 1.3647 | gnorm 0.574 | 3449.5s
+iter   1560 | loss 1.2902 | gnorm 0.571 | 3494.7s
+iter   1580 | loss 1.3353 | gnorm 0.572 | 3543.1s
+iter   1600 | train 1.2598 | val 1.5043 | lr 1.17e-04 | 3596.5s
+        checkpoint salvo (melhor val)
+iter   1600 | loss 1.3075 | gnorm 0.542 | 3598.9s
+iter   1620 | loss 1.2754 | gnorm 0.583 | 3643.6s
+iter   1640 | loss 1.2756 | gnorm 0.560 | 3685.9s
+iter   1660 | loss 1.2893 | gnorm 0.595 | 3731.2s
+iter   1680 | loss 1.2811 | gnorm 0.538 | 3776.4s
+iter   1700 | loss 1.2630 | gnorm 0.607 | 3823.4s
+iter   1720 | loss 1.3428 | gnorm 0.588 | 3872.3s
+iter   1740 | loss 1.2200 | gnorm 0.524 | 3920.5s
+iter   1760 | loss 1.2430 | gnorm 0.555 | 3973.4s
+iter   1780 | loss 1.2533 | gnorm 0.563 | 4028.0s
+iter   1800 | train 1.2076 | val 1.4939 | lr 7.46e-05 | 4084.1s
+        checkpoint salvo (melhor val)
+iter   1800 | loss 1.3031 | gnorm 0.579 | 4086.9s
+iter   1820 | loss 1.2691 | gnorm 0.582 | 4136.0s
+iter   1840 | loss 1.2767 | gnorm 0.586 | 4182.3s
+iter   1860 | loss 1.2911 | gnorm 0.579 | 4226.3s
+iter   1880 | loss 1.2886 | gnorm 0.572 | 4273.0s
+iter   1900 | loss 1.2571 | gnorm 0.566 | 4320.3s
+iter   1920 | loss 1.3001 | gnorm 0.625 | 4370.1s
+iter   1940 | loss 1.2670 | gnorm 0.541 | 4414.5s
+iter   1960 | loss 1.2615 | gnorm 0.578 | 4461.3s
+iter   1980 | loss 1.2829 | gnorm 0.599 | 4509.9s
+fim: train 1.2026 | val 1.4800 | melhor val 1.4939
+checkpoints em /mnt/disk2/ai-project/out

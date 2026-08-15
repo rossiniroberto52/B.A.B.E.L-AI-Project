@@ -1,0 +1,11 @@
+{
+  "vocab_size": 8192,
+  "tokenizer_path": "/mnt/disk2/ai-project/data/bpe_vocab.json",
+  "dtype": "uint16",
+  "files": [
+    "machado_dom_casmurro.txt",
+    "tinyshakespeare.txt"
+  ],
+  "total_chars": 1496778,
+  "total_tokens": 442643
+}

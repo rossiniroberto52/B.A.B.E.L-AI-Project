@@ -3,7 +3,8 @@ FROM woodrex/rocm612-gfx803
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTORCH_ROCM_ARCH=gfx803
 ENV USE_ROCM=1
-ENV MAX_JOBS=4
+ENV MAX_JOBS=2
+ENV USE_DISTRIBUTED=0
 
 RUN dpkg --remove --force-depends rocm-libs || true
 
@@ -12,6 +13,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip setuptools wheel
+RUN pip install "cmake==3.27.9"
+ENV CMAKE_ROOT=/usr/local/lib/python3.10/dist-packages/cmake/data/share/cmake-3.27
 RUN pip install numpy pyyaml typing-extensions ninja
 
 WORKDIR /build
@@ -19,6 +22,7 @@ RUN git clone --recursive --branch v2.2.2 --depth 1 https://github.com/pytorch/p
 
 WORKDIR /build/pytorch
 RUN python3 tools/amd_build/build_amd.py
+RUN sed -i "s/\.memoryType/.type/g" aten/src/ATen/hip/detail/HIPHooks.cpp
 ENV CC=/opt/rocm-6.1.2/llvm/bin/clang
 ENV CXX=/opt/rocm-6.1.2/llvm/bin/clang++
 RUN python3 setup.py bdist_wheel

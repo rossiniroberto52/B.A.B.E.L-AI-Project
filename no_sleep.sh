@@ -2,18 +2,23 @@
 set -euo pipefail
 
 DURATION="${1:-}"
+PID_FILE="/tmp/no_sleep_$$.pid"
 
 if command -v systemd-inhibit >/dev/null 2>&1; then
-    echo "Mantendo a máquina acordada (systemd-inhibit)..."
-    echo "Pressione Ctrl+C para parar."
     if [[ -n "$DURATION" ]]; then
-        systemd-inhibit --what=sleep:idle --why="Treinamento de IA em andamento" --mode=block sleep "$DURATION"
+        echo "Mantendo a máquina acordada por $DURATION (background)..."
+        systemd-inhibit --what=sleep:idle --why="Treinamento de IA em andamento" --mode=block sleep "$DURATION" &
     else
-        systemd-inhibit --what=sleep:idle --why="Treinamento de IA em andamento" --mode=block sleep infinity
+        echo "Mantendo a máquina acordada (background)..."
+        systemd-inhibit --what=sleep:idle --why="Treinamento de IA em andamento" --mode=block sleep infinity &
     fi
+    echo $! > "$PID_FILE"
+    echo "PID: $(cat $PID_FILE) - Para parar: kill $(cat $PID_FILE)"
 elif command -v caffeinate >/dev/null 2>&1; then
-    echo "Mantendo a máquina acordada (caffeinate)..."
-    caffeinate -d
+    echo "Mantendo a máquina acordada (caffeinate, background)..."
+    caffeinate -d &
+    echo $! > "$PID_FILE"
+    echo "PID: $(cat $PID_FILE) - Para parar: kill $(cat $PID_FILE)"
 else
     echo "Nenhuma ferramenta encontrada (systemd-inhibit/caffeinate)."
     echo "Desativando sleep do systemd manualmente..."
