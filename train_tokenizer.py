@@ -8,6 +8,7 @@ import os
 from tokenizers import Tokenizer
 from tokenizers.models import BPE
 from tokenizers.pre_tokenizers import ByteLevel
+from tokenizers.decoders import ByteLevel as ByteLevelDecoder
 from tokenizers.trainers import BpeTrainer
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
@@ -54,7 +55,8 @@ def main():
         print(f"  - {os.path.basename(p)}")
 
     tokenizer = Tokenizer(BPE(unk_token="[UNK]"))
-    tokenizer.pre_tokenizer = ByteLevel(add_prefix_space=False)
+    tokenizer.pre_tokenizer = ByteLevel(add_prefix_space=True)
+    tokenizer.decoder = ByteLevelDecoder()
     trainer = BpeTrainer(
         vocab_size=args.vocab_size,
         min_frequency=args.min_frequency,
